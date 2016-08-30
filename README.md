@@ -370,7 +370,7 @@ var log4jsConfig = {
 ```
 
 ## 99.其他组件及功能
-### HashMap  dependency.hip.util.hashMap
+### 99.1.HashMap  dependency.hip.util.hashMap
 提供了js实现的数据类型HashMap ，用法同Java
 ```js
 $import([ "dependency.hip.util.hashMap"], function() {
@@ -381,7 +381,7 @@ $import([ "dependency.hip.util.hashMap"], function() {
 });
 ```
 
-### 事件发布订阅及通知 dependency.hip.util.eventHandle
+### 99.2.事件发布订阅及通知 dependency.hip.util.eventHandle
 当前的js处理中包含了大量的异步操作，主要包括资源的加载和后台服务的调用。<br/>
 使用事件的通知可以简化异步操作的复杂度，增加代码的可读性。<br/>
 

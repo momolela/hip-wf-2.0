@@ -193,7 +193,9 @@ $new("demo.demoClass","构造参数").then(function(clas) {
 ```xml
   1.该功能由类dependency.hip.mod.modBase实现。
   2.一个html片段的加载可能需要3个文件  1.js文件，继承dependency.hip.mod.modBase类，2.html文件，3.css文件（可选）
-  3.3个文件必须是同名的位于相同的路径下（后缀不同），例如 demo.demoDiv.js  demo.demoDiv.html   demo.demoDiv.css 
+  3.三个文件必须是同名的位于相同的路径下（后缀不同），例如 demo.demoDiv.js  demo.demoDiv.html   demo.demoDiv.css 
+  
+  使用该功能可以非常方便的将页面模块化，并且可以避免将许多类型的代码写到一个文件中（js，html，css混合）。方便不同的人员开发不同的文件。将复杂的页面问题尽可能的拆解小，具体的代码处理具体的页面。结合easyui，jqwidgets 等 组件框架可以快速的开发出高可维护可读的前端代码。
 ```
 ```html
   <!--demo.demoDiv.html-->
@@ -240,12 +242,47 @@ $define("demo.demoDiv", {
 });
 ```
 
-### 4.3.加载并使用HTML片段以及处理的类
-
+### 4.3.加载并使用HTML片段
 ```js
 $import("demo.demoDiv", function() {
 	var demoDiv =  new demo.demoDiv();
 	demoDiv.create(document.body,"这个参数就是onLoad中的args");//添加demo.demoDiv.html 到body中
 	//create是容纳文件中DOM的父容器
 }); 
+```
+
+## 5.调用后端服务
+```xml
+  该功能的目的是希望前端开发者能像调用本地js方法一样调用后端js方法
+```
+
+### 5.1.定义后端方法
+   后端方法的定义即为远程方法的定义 （参见 2.使用分布式服务调用功能。）,即该框架可以调用后台的远程方法，不需要另外进行定义。
+
+### 5.2.调用后端方法
+```js
+$import(["dependency.hip.remoteService"],function(){//调用后端方法依赖于dependency.hip.remoteService
+    //$remoteService("域名.服务名","方法名")
+    var getSome = $remoteService('civ.demoServcie', 'getSome');//定义异步代理方法getSome
+    var setSome = $remoteService('civ.demoServcie', 'setSome');//定义异步代理方法setSome
+    
+    //传入的参数和获取的参数等同java对象的json序列化格式
+    
+    //调用getSome方法
+    var result = getSome();
+    result.success(function(data) {
+        //data是后台返回的数据
+    });
+    result.error(function(code,message) {
+       //code 错误代码
+       //data 错误消息
+    });
+    
+    //调用getSome方法
+    setSome({name:"demo",age:1});
+    
+    //可以定义同步执行的方法（不建议使用）
+    var syncGetSome = $syncRemoteService('civ.demoServcie', 'getSome');//定义同步代理方法getSome
+    var syncSetSome = $syncRemoteService('civ.demoServcie', 'setSome');//定义同步代理方法setSome
+});
 ```

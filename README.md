@@ -29,16 +29,21 @@ hip-wf编译后为jar，包含如下功能。
 * 编写远程服务
 
 ```java
-@RpcClass(serviceID = "demoCIVServcie")
+/*远程方法可被java后端程序远程调用，也可被前端js调用（框架的核心功能）
+ *远程方法的入参和出参可使用任意数据类型，包括自定义java类型。
+ */
+@RpcClass(serviceID = "demoServcie")//用于扫描中确认 servcieID
 public class remoteServcie {
 
-	@RpcService
-	public void setSome(String parentID) throws Exception {
+        
+        
+	@RpcService //定义一个方法为远程方法
+	public void setSome(String parentID){
 	 
 	}
 
 	@RpcService
-	public Map<String, Object> getSome() throws Exception {
+	public Map<String, Object> getSome(){
 		Map mi = new HashMap<String, Object>();
 		mi.put("name", "病人");
 		mi.put("age", "53");
@@ -64,7 +69,7 @@ public class remoteServcie {
 	
         <!-- 配置服务发布与注册 -->
         <!-- name:应用域名，一个javaweb应用为一个域，同一个服务器下一个域名只允许有一个，多个服务器可重复并且进行负载 -->
-        <!-- registryAddress:zookeeper地址，用于服务注册发现协调的zookeeper的地址 -->
+        <!-- registryAddress:zookeeper地址，用于服务注册发现协调的zookeeper的地址（必须部署zookeeper） -->
         <!-- rpcServerWorkUrl:本应用服务发布的地址（注意端口号必须和javaweb容器相同） -->
 	<ssdev:applicationDomain name="civ" registryAddress="zookeeper://localhost:2181" rpcServerWorkUrl="hessian://localhost:8300/civ/rpc/" enableLogger="false" />
   
@@ -80,3 +85,19 @@ public class remoteServcie {
 	</bean>
 </beans>
 ```
+
+* 调用远程服务
+ 调用远程服务和被调用者必须使用相同的hip-wf框架，并且做响应spring配置.
+ 调用远程方法在参数传递和异常处理方面同调用本地方法。
+```java
+ //调用civ 域下的服务 demoServcie 中的getSome方法（如果该域部署多个，该调用将会随机负载）
+ Map<String, Object> data = ( Map<String, Object>) Client.rpcInvoke("civ.demoServcie", "getSome");
+ //传递参数
+ Map<String, Object> data = ( Map<String, Object>) Client.rpcInvoke("civ.demoServcie", "getSome",arg1,arg2,arg3);
+ //指定调用某ip下的服务
+ Map<String, Object> data = ( Map<String, Object>) Client.rpcInvoke("civ.demoServcie", "getSome",new IpBalance("ip地址"),arg1,arg2,arg3);
+ ```
+ 
+该部分内容详细用法详见[ssdev wiki](http://www.baidu.com)  
+ 
+## 3.使用javaScript面向对象扩展

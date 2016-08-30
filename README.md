@@ -37,13 +37,13 @@ hip-wf编译后为jar，包含如下功能。
 	http://www.bsoft.com.cn/schema/ssdev
 	http://www.bsoft.com.cn/schema/ssdev/ssdev.xsd">
 	
-  <!-- 配置服务发布与注册 -->
-  <!-- name:应用域名，一个javaweb应用为一个域，同一个服务器下一个域名只允许有一个，多个服务器可重复并且进行负载 -->
-  <!-- registryAddress:zookeeper地址，用于服务注册发现协调的zookeeper的地址 -->
-  <!-- rpcServerWorkUrl:本应用服务发布的地址（注意端口号必须和javaweb容器相同）
+        <!-- 配置服务发布与注册 -->
+        <!-- name:应用域名，一个javaweb应用为一个域，同一个服务器下一个域名只允许有一个，多个服务器可重复并且进行负载 -->
+        <!-- registryAddress:zookeeper地址，用于服务注册发现协调的zookeeper的地址 -->
+        <!-- rpcServerWorkUrl:本应用服务发布的地址（注意端口号必须和javaweb容器相同） -->
 	<ssdev:applicationDomain name="civ" registryAddress="zookeeper://localhost:2181" rpcServerWorkUrl="hessian://localhost:8300/civ/rpc/" enableLogger="false" />
   
-  <!-- 通过扫描方式发布服务 ，扫描需要暴露为远程服务的类-->
+        <!-- 通过扫描方式发布服务 ，扫描需要暴露为远程服务的类-->
 	<ssdev:rpcService-scan base-package="civ.service.page,hip.wf" />
 	
 	<!-- 不通过扫描的方式发布服务 -->

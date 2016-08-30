@@ -1,4 +1,4 @@
-该框架为bsoft公司内部所使用，部分依赖包位于公司内部maven库
+该框架为bsoft公司内部所使用，部分依赖包位于公司内部maven库,以下文件只包括该框架的基本用法。
 # hip-wf 2.0
 ```xml
 hip-wf编译后为jar，包含如下功能。
@@ -270,10 +270,10 @@ $import(["dependency.hip.remoteService"],function(){//调用后端方法依赖�
     
     //调用getSome方法
     var result = getSome();
-    result.success(function(data) {
+    result.success(function(data) {//后台服务成功时执行
         //data是后台返回的数据
     });
-    result.error(function(code,message) {
+    result.error(function(code,message) {//后台服务异常时执行
        //code 错误代码
        //data 错误消息
     });
@@ -285,4 +285,86 @@ $import(["dependency.hip.remoteService"],function(){//调用后端方法依赖�
     var syncGetSome = $syncRemoteService('civ.demoServcie', 'getSome');//定义同步代理方法getSome
     var syncSetSome = $syncRemoteService('civ.demoServcie', 'setSome');//定义同步代理方法setSome
 });
+```
+### 5.3.以实体类的方式接收数据
+调用后台的服务传回的数据默认为json格式，框架中也可使用js类来映射后端的数据。该功能能够更好结合面向对象的开发思路，并且减少大量转换的工作量<br/>
+例如有如下类
+```js
+//demo.patient.js
+$define("demo.patient", {
+	addr : $type("demo.addr"),//使用$type 声明addr属性在转换的过程中转换为civDemoPage.addr类型
+	functionA : function(args) {
+	   alert(this.name);
+	},
+	setName : function(name) {//如果定义set方法，则在转换的过程中使用set方法
+	   this.name = name;
+	   //doSomething
+	},
+	getName : function() {
+	   return this.name;
+	}
+});
+```
+```js
+//demo.addr.js
+$define("demo.addr", {
+	setAddr : function(addr) {
+		this.addr = addr;
+	},
+	getAddr : function() {
+		return this.addr;
+	}
+});
+```
+```js
+$import(["dependency.hip.remoteService"],function(){ 
+    var getSome = $remoteService('civ.demoServcie', 'getSome',"demo.patient");//第三个参数用于指定映射的类
+     //调用getSome方法
+    getSome().success(function(data) {
+        //data 即为 demo.patient 类型
+    });
+});
+```
+
+## 6.使用log4js进行前端日志处理
+```xml
+   该功能由一组类构成，模仿log4j的思路进行开发。用于记录一些例如点击等用户行为日志，并且能够和后台log4j进行结合。
+   使用appender进行日志的处理，框架默认提供 console, service  两种日志appender，并且提供扩展
+   console：使用console.log进行浏览器控制台的打印
+   service：发送到后台服务，日志到后台后进入log4j的日志（可通过log4j的配置进行后端日志的处理）
+   
+   该功能主要方便开发者记录前端日志，打通前后端日志桥梁。
+```
+
+### 使用log4js
+```js
+$import( "dependency.hip.log.log4js",function(){
+   var logger = $log4js.getLogger("demoLogger");//logger的名字如果使用发送到后端 appender 那么可以针对该名称进行log4j的配置
+   //目前框架中只支持3总日志级别（够用）
+   logger.error("这里是前端的日志");
+   logger.debug("这里是前端的日志");
+   if(logger.isInfo()){
+       logger.info("这里是前端的日志");
+   }
+});
+```
+
+### 配置 log4js
+在spring配置中增加，以便后台接收日志
+```xml
+   <ssdev:rpcService-scan base-package="hip.wf" />
+```
+
+在任意地方定义变量 log4jsConfig 
+```js
+var log4jsConfig = {
+	level : "INFO",//日志级别
+	append : [ {//以数组定义多个append
+		clas : "dependency.hip.log.appender.console",//append的类
+		layout : "dependency.hip.log.layout.patternLayout",
+		conversionPattern : "{date} [{level}]  {message}"
+	}, {
+		clas : "dependency.hip.log.appender.service"
+	} ]
+};
 ```

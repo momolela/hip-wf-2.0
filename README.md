@@ -101,3 +101,4 @@ public class remoteServcie {
 该部分内容详细用法详见[ssdev wiki](http://www.baidu.com)  
  
 ## 3.使用javaScript面向对象扩展
+未完....

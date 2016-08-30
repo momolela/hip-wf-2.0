@@ -229,7 +229,6 @@ $define("demo.demoDiv", {
 
 ```js
 //demo.demoDiv.js
-$import([ "dependency.jquery.jquery-191"]);
 $define("demo.demoDiv", {
 	extend : "dependency.hip.mod.angularModBase",//必须要继承该类（不同于3.1中）
 	init : function() {
@@ -243,3 +242,10 @@ $define("demo.demoDiv", {
 
 ### 4.3.加载并使用HTML片段以及处理的类
 
+```js
+$import("demo.demoDiv", function() {
+	var demoDiv =  new demo.demoDiv();
+	demoDiv.create(document.body,"这个参数就是onLoad中的args");//添加demo.demoDiv.html 到body中
+	//create是容纳文件中DOM的父容器
+}); 
+```

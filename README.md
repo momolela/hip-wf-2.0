@@ -28,6 +28,31 @@ hip-wf编译后为jar，包含如下功能。
 ## 2.使用分布式服务调用功能。
 * 编写远程服务
 
+```java
+@RpcClass(serviceID = "demoCIVServcie")
+public class remoteServcie {
+
+	@RpcService
+	public void setSome(String parentID) throws Exception {
+	 
+	}
+
+	@RpcService
+	public Map<String, Object> getSome() throws Exception {
+		Map mi = new HashMap<String, Object>();
+		mi.put("name", "病人");
+		mi.put("age", "53");
+
+		Map addr = new HashMap<String, Object>();
+		addr.put("addr", "杭州市文三路199号");
+
+		mi.put("addr", addr);
+		return mi;
+	}
+
+}
+```
+
 * 配置spring
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>

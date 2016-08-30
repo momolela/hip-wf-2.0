@@ -336,7 +336,7 @@ $import(["dependency.hip.remoteService"],function(){
    该功能主要方便开发者记录前端日志，打通前后端日志桥梁。
 ```
 
-### 使用log4js
+### 6.1.使用log4js
 ```js
 $import( "dependency.hip.log.log4js",function(){
    var logger = $log4js.getLogger("demoLogger");//logger的名字如果使用发送到后端 appender 那么可以针对该名称进行log4j的配置
@@ -349,13 +349,13 @@ $import( "dependency.hip.log.log4js",function(){
 });
 ```
 
-### 配置 log4js
+### 6.2.配置 log4js
 在spring配置中增加，以便后台接收日志
 ```xml
    <ssdev:rpcService-scan base-package="hip.wf" />
 ```
 
-在任意地方定义变量 log4jsConfig 
+在任意地方定义变量 log4jsConfig (必须是在加载log4js前)
 ```js
 var log4jsConfig = {
 	level : "INFO",//日志级别
@@ -368,3 +368,49 @@ var log4jsConfig = {
 	} ]
 };
 ```
+
+## 99.其他组件及功能
+### HashMap  dependency.hip.util.hashMap
+提供了js实现的数据类型HashMap ，用法同Java
+```js
+$import([ "dependency.hip.util.hashMap"], function() {
+     var map = new dependency.hip.util.hashMap();
+     var value={};
+     map.put("key",value);
+     value= map.get("key");
+});
+```
+
+### 事件发布订阅及通知 dependency.hip.util.eventHandle
+当前的js处理中包含了大量的异步操作，主要包括资源的加载和后台服务的调用。<br/>
+使用事件的通知可以简化异步操作的复杂度，增加代码的可读性。<br/>
+
+例如定义‘病人’类型包含事件 出院 discharged
+```js
+$import("dependency.hip.remoteService");
+$define("civDemoPage.patient", {
+        event_Discharged : $ref("dependency.hip.util.eventHandle"),//事件句柄
+	onDischarged : function(fun) {
+		this.event_Change.on(fun);
+	},
+	discharged : function(args) {
+	     var discharged = $remoteService('civ.demoServcie', 'discharged');
+	     discharged().success(function(data){
+	        this.event_Discharged.send(data);
+	     });
+	}
+});
+```
+订阅该事件
+```js
+$import("civDemoPage.patient",function(){
+   var patient = new civDemoPage.patient();
+   patient.onDischarged(function(){
+       //患者出院后处理
+   });
+   patient.discharged();
+})；
+```
+
+
+
